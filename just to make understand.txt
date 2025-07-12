@@ -1,0 +1,107 @@
+✅ ROOT FOLDER: pcie_protocol_pipeline/
+🔹 README.md
+High-level intro about the whole project suite
+
+Explains that you built a PCIe pipeline: FIFO → PHY → TLP
+
+Tools used, how to simulate, learning outcome
+
+🔹 Makefile
+Automates simulation (e.g., run FIFO TB, compile PHY)
+
+Example:
+
+makefile
+Copy
+Edit
+run_fifo:
+	cd 01_SmartFIFO && iverilog -o sim.out tb/fifo_tb.sv rtl/*.v && vvp sim.out
+📁 01_SmartFIFO/
+Subfolder	What to put inside
+rtl/	FIFO RTL modules: fifo.v, fifo_ctrl.v
+tb/	Testbenches: fifo_tb.sv, fifo_assertions.sv
+doc/	Design spec, testplan, block diagram (PDF, PNG, or .md)
+sim/	Output logs: waveform dumps, sim.out, .vcd files
+README.md	Explain how the FIFO works and how you verified it
+
+📁 02_PCIe_PHY_Decoder/
+Subfolder	What to put inside
+rtl/	8b10b_decoder.v, comma_align.v, deskew_unit.v
+tb/	phy_tb.sv, symbol_driver.sv, phy_assertions.sv
+doc/	Protocol explanation, RTL block diagram, testcases
+sim/	Simulation logs and waveform dumps
+README.md	Overview of PHY decoder: purpose, signals, testcases
+
+📁 03_PCIe_TLP_Decoder/
+Subfolder	What to put inside
+rtl/	tlp_parser.v, mmio_decoder.v, tlp_ctrl.v
+tb/	tlp_tb.sv, tlp_driver.sv, scoreboard.sv, SVA
+doc/	TLP structure reference, address mapping plan
+sim/	Logs: decoded output, memory write captures, etc.
+README.md	TLP parser design + how it simulates MMIO endpoint
+
+📁 dut_top/
+This is for top-level integration, where you connect FIFO → PHY → TLP as a pipeline.
+
+Subfolder	What to put inside
+rtl/	dut_top.v: Connect FIFO → PHY → TLP
+tb/	Top-level TB: full_pipeline_tb.sv, stimulus driver
+waveform/	Saved screenshots from GTKWave showing end-to-end result
+
+📁 shared_libs/
+Reusable modules across projects.
+
+Folder	Contents
+packages/	common_pkg.sv: parameters, typedefs, enums
+sv_interfaces/	fifo_if.sv, tlp_if.sv: reusable SV interfaces
+macros/	assert_macros.svh, reset_macros.svh: SVA & TB macros
+
+📁 scripts/
+Useful scripts for:
+
+Stimulus generation (Python)
+
+Test automation
+
+Log parsing
+
+Example:
+
+python
+Copy
+Edit
+generate_symbols.py  # Outputs PCIe 8b10b-encoded bitstream
+📁 waveform_dumps/
+Store .vcd or .fst files here from:
+
+FIFO verification
+
+PHY decoding streams
+
+TLP decoding results
+
+✅ Also save screenshots of GTKWave here (to show in your README).
+
+📝 Additional README Tips for Each Subproject
+Inside README.md of each module, include:
+
+What the module does
+
+Inputs/Outputs
+
+Simulation command
+
+Testplan summary
+
+Sample waveform image
+
+How it connects to the next project
+
+🧠 Summary of How it Connects
+SmartFIFO stores protocol data
+
+PHY Decoder converts serial stream to aligned data symbols
+
+TLP Decoder extracts headers/payload from symbols and acts on them
+
+DUT Top connects all three — complete protocol simulation!
